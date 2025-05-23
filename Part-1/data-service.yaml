@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-service
+  namespace: app-stack
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: data-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: data-service
+    spec:
+      containers:
+      - image: hashicorp/http-echo
+        imagePullPolicy: Always
+        name: data-service
+        ports:
+        - containerPort: 5678
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 200Mi
+
+        readinessProbe:
+          tcpSocket:
+            port: 5678
+          initialDelaySeconds: 30
+
+        livenessProbe:
+          tcpSocket:
+            port: 5678
+          initialDelaySeconds: 30
+          periodSeconds: 90
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-service
+  namespace: app-stack
+  labels:
+    app: data-service
+spec:
+  ports:
+    - port: 5678
+      targetPort: 5678
+  selector:
+    app: data-service
+
