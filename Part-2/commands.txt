@@ -1,0 +1,10 @@
+helm repo add minio https://charts.min.io/
+helm install minio minio/minio --namespace app-stack \
+    --set mode=standalone \
+  --set accessKey=admin \
+  --set secretKey=password \
+  --set persistence.enabled=false \
+  --set resources.requests.memory=256Mi \
+  --set resources.requests.cpu=100m \
+  --set resources.limits.memory=512Mi \
+  --set resources.limits.cpu=200m

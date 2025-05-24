@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: data-service-minio-access
+  namespace: app-stack
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bind-data-service
+  namespace: app-stack
+subjects:
+- kind: ServiceAccount
+  name: data-sa
+  namespace: app-stack
+roleRef:
+  kind: Role
+  name: data-service-minio-access
+  apiGroup: rbac.authorization.k8s.io
